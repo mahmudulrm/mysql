@@ -1,1 +1,66 @@
+<?php
+$config = parse_ini_file('include/config.ini');
+$servername = "localhost";
+$username = $config['username'];
+$password = $config['password'];
+$dbname = $config['dbname'];
 
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+
+// sql to DROP table
+$d_table = "DROP TABLE IF EXISTS demo";
+
+if ($conn->query($d_table) === TRUE) {
+    echo "Table Delete successfully  <br />";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+
+
+// sql to create table
+$c_table = "CREATE TABLE demo (
+id INT(6) AUTO_INCREMENT PRIMARY KEY, 
+date_e VARCHAR(20),
+open  FLOAT,
+close  FLOAT
+)";
+
+if ($conn->query($c_table) === TRUE) {
+    echo "Table demo created successfully <br />";
+} else {
+    echo "Error creating table: " . $conn->error;
+}
+
+
+foreach (glob("./*.csv") as $file) {
+// INSERT from CSV
+$csv_file = $file; 
+if (($handle = fopen($csv_file, "r")) !== FALSE) {
+   fgetcsv($handle);   
+   while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        $num = count($data);
+        for ($c=0; $c < $num; $c++) {
+          $col[$c] = $data[$c];
+        }
+		 $col1 = $col[0];
+		 $col2 = $col[1];
+		 $col3 = $col[2];
+		 $sql = 'INSERT INTO `demo` (`date_e`, `open`, `close`) VALUES ("'.$col1.'", '.$col2.', '.$col3.')';
+		 
+		if ($conn->query($sql) === TRUE) {
+			echo $col1 ." ". $col2 ." ". $col3 ."  New record created successfully <br />";
+		} else {
+			echo "Error: " . $sql . "<br>" . $conn->error;
+		}
+ }
+    fclose($handle);
+}
+echo "File data successfully imported to database!!<br />";
+}
+
+$conn->close();
+?>
