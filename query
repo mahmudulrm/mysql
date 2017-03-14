@@ -1,0 +1,28 @@
+SELECT MIN(id), MAX(id) FROM tabla
+
+SELECT Date, Name, EmpID, Card, my_SEC_TO_TIME((TIME_TO_SEC(MAX(Time)))-(TIME_TO_SEC(MIN(Time)))) AS Hours from demo AS a,(select distinct ll.Date, ll.Name AS n from demo) AS ll WHERE a.Name = ll.n;
+
+
+SELECT Date, Name, EmpID, Card, my_SEC_TO_TIME(MAX(Time)) AS MAX, my_SEC_TO_TIME(MIN(Time)) AS MAX from demo 
+
+SELECT Date, Name, EmpID from demo AS a,(SELECT Name AS N FROM demo) AS m WHERE a.Name = m.Name;
+SELECT Date, Name, EmpID from demo;
+
+
+SELECT * FROM `demo` WHERE `Name` IN (SELECT DISTINCT `Date`,`Name` FROM `demo`)
+
+
+SELECT * FROM demo AS a, (SELECT EmpID FROM demo) AS m  WHERE  a.EmpID = m.EmpID;
+
+SELECT * FROM demo AS a, (SELECT MIN(id) AS mini,
+				MAX(id) AS maxi
+		 FROM   demo) AS m
+WHERE  m.maxi = a.id
+OR m.mini = a.id;
+
+SELECT Name AS N FROM demo AS all 
+
+
+select distinct date as Date , name as Name, empid as EmpID, card as Card, min(time) as InTime, max(time) as OutTime from demo group by date, empid
+select Date, Name from (select distinct Date, Name from demo) as t;
+
